@@ -1,0 +1,14 @@
+fields:
+  pdfmyurl_license_key:
+    display: PDF My URL License Key
+    instructions: Found at https://members.pdfmyurl.com/memberprofile.php
+    type: text
+  pdf_asset_container:
+    display: PDF Asset Container
+    type: asset_container
+    instructions: Set the container that saved pdfs should be stored in
+    default: main
+  pdf_asset_path:
+    display: PDF Asset Path
+    type: text
+    instructions: Set the path to save pdfs to

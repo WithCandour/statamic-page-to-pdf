@@ -1,0 +1,5 @@
+name: Page To PDF
+version: '1.0.0'
+description: 'Generate PDF versions of your pages'
+developer: 'Candour'
+developer_url: 'https://withcandour.co.uk'
