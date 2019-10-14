@@ -11,4 +11,4 @@ fields:
   pdf_asset_path:
     display: PDF Asset Path
     type: text
-    instructions: Set the path to save pdfs to
+    instructions: Set the path to save pdfs to, defaults to `/html-pdfs`

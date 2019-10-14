@@ -6,6 +6,11 @@ use Statamic\Extend\Tags;
 
 class PageToPdfTags extends Tags
 {
+    /**
+     * Return a button to trigger pdf generation
+     *
+     * @return string
+     */
     public function index()
     {
         $ctx = collect($this->context);
@@ -21,9 +26,15 @@ class PageToPdfTags extends Tags
         return $this->view('pagetopdf_button', $data->merge($ctx));
     }
 
+    /**
+     * Return the script tag to load the button event binder
+     *
+     * @return string
+     */
     public function script()
     {
-        return '<script type="text/javascript" src="/_resources/addons/PageToPdf/js/pagetopdf-buttons.js"></script>';
+        $installDir = basename(__DIR__);
+        return "<script type='text/javascript' src='/_resources/addons/$installDir/js/pagetopdf-buttons.js'></script>";
     }
 }
 
