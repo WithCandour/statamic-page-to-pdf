@@ -37,7 +37,6 @@ class PageToPdfAPI extends API
         $url = $content->absoluteUrl();
         $id = $content->id();
 
-        // Testing
         if($existing = $this->retrieve($id)) {
             return json_encode([
                 'status' => 'cached',
@@ -99,7 +98,8 @@ class PageToPdfAPI extends API
      */
     public function delete($id)
     {
-        Folder::delete($this->get_path() . $id);
+        $container = $this->get_container();
+        $container->disk()->filesystem()->deleteDirectory($this->get_path() . '/' . $id);
     }
 
     /**
