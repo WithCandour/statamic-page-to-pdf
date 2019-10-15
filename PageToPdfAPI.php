@@ -3,6 +3,7 @@
 namespace Statamic\Addons\PageToPdf;
 
 use GuzzleHttp\Client as Guzzle;
+use Illuminate\Support\Facades\Log;
 use Statamic\API\AssetContainer;
 use Statamic\API\Content;
 use Statamic\API\Folder;
@@ -46,16 +47,39 @@ class PageToPdfAPI extends API
             ]);
         }
 
-        $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-        $pdfmyurl_response = $client->get($endpoint);
+        // Testing
+        // $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
+        $endpoint = 'https://pdfmyurl.com/api';
+        $license = $this->getConfig('pdfmyurl_license_key', '');
+        if(!$license) {
+            Log::error('[PageToPDF] You have not entered a license key for PDFMyURL');
+            return json_encode([
+                'reason_phrase' => 'You have not entered a license key for PDFMyURL',
+                'status_code' => 404,
+                'status' => 'error',
+                'file' => null
+            ]);
+        }
+
+        try {
+            $pdfmyurl_response = $client->get($endpoint, [
+                'query' => [
+                    'license' => $license,
+                    'url' => $url,
+                    'css_media_type' => 'print'
+                ]
+            ]);
+        } catch(Exception $e) {
+            Log::error("[PageToPDF] Attempt to generate pdf from page: \"{$url}\" failed: " . $e->getResponse());
+            return false;
+        }
 
         $response_contents = $pdfmyurl_response->getBody()->getContents();
-
         $result = [
             'reason_phrase' => $pdfmyurl_response->getReasonPhrase(),
             'status_code' => $pdfmyurl_response->getStatusCode()
         ];
-
         if($result['status_code'] == 200) {
             $url = $this->store($id, $response_contents);
             $data = [
@@ -63,7 +87,6 @@ class PageToPdfAPI extends API
                 'status' => 'success',
             ];
         } else {
-            // TODO: Error logging
             $data = [
                 'file' => null,
                 'status' => 'error'
