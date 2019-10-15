@@ -63,12 +63,15 @@ class PageToPdfAPI extends API
         }
 
         try {
+            $params = [
+                'license' => $license,
+                'url' => $this->modifyURL($url, $this->getConfig('url_params', [])),
+                'orientation' => $this->getConfig('pdfmyurl_orientation', 'Portrait'),
+                'css_media_type' => $this->getConfig('pdfmyurl_css_media_type', 'print'),
+                'page_size' => $this->getConfig('pdfmyurl_page_size', 'A4')
+            ];
             $pdfmyurl_response = $client->get($endpoint, [
-                'query' => [
-                    'license' => $license,
-                    'url' => $url,
-                    'css_media_type' => 'print'
-                ]
+                'query' => array_merge($params, $this->getConfig('pdfmyurl_params', []))
             ]);
         } catch(Exception $e) {
             Log::error("[PageToPDF] Attempt to generate pdf from page: \"{$url}\" failed: " . $e->getResponse());
@@ -140,6 +143,21 @@ class PageToPdfAPI extends API
         $container->disk()->filesystem()->put($path, $contents);
 
         return URL::makeAbsolute($container->url() . $path);
+    }
+
+    /**
+     * Modify the url by appending configured parameters
+     *
+     * @param string $url
+     * @return string
+     */
+    private function modifyURL($url, $params)
+    {
+        $configParams = collect($params);
+        $parameters = $configParams->map(function($value) {
+            return urlencode($value['param']) . '=' . urlencode($value['value']);
+        });
+        return $url . '?' . $parameters->implode('&');
     }
 
     /**

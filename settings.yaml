@@ -1,8 +1,4 @@
 fields:
-  pdfmyurl_license_key:
-    display: PDF My URL License Key
-    instructions: Found at https://members.pdfmyurl.com/memberprofile.php
-    type: text
   pdf_asset_container:
     display: PDF Asset Container
     type: asset_container
@@ -11,4 +7,88 @@ fields:
   pdf_asset_path:
     display: PDF Asset Path
     type: text
+    default: '/html-pdfs'
     instructions: Set the path to save pdfs to, defaults to `/html-pdfs`
+  url_params:
+    display: Additional URL Parameters
+    instructions: When the PDF generation tool crawls the page we can send it along with custom parameters appended, place these in the grid below
+    type: grid
+    width: 50
+    fields:
+      param:
+        type: text
+      value:
+        type: text
+  pdfmyurl_settings_section:
+    display: PDF My URL Settings
+    instructions: These options control the parameters that are sent to PDFMyURL
+    type: section
+  pdfmyurl_license_key:
+    display: PDF My URL License Key
+    instructions: Found at https://members.pdfmyurl.com/memberprofile.php
+    type: text
+  pdfmyurl_orientation:
+    display: Orientation
+    type: radio
+    inline: true
+    width: 33
+    default: Portrait
+    options:
+      - Portrait
+      - Landscape
+  pdfmyurl_css_media_type:
+    display: CSS Media Type
+    type: select
+    width: 33
+    default: print
+    options:
+      print: Print
+      all: All
+      screen: Screen
+  pdfmyurl_page_size:
+    display: Page Size
+    type: select
+    width: 33
+    default: A4
+    options:
+      - A0
+      - A1
+      - A2
+      - A3
+      - A4
+      - A5
+      - A6
+      - A7
+      - A8
+      - A9
+      - B0
+      - B1
+      - B2
+      - B3
+      - B4
+      - B5
+      - B6
+      - B7
+      - B8
+      - B9
+      - B10
+      - C5E
+      - Comm10E
+      - DLE
+      - Executive
+      - Folio
+      - Ledger
+      - Legal
+      - Letter
+      - Tabloid
+  pdfmyurl_params:
+    display: PDFMyURL Parameters
+    instructions: Customise the request that gets sent to PDFMyURL here
+    type: grid
+    width: 50
+    fields:
+      param:
+        type: text
+      value:
+        type: text
+
