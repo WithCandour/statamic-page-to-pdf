@@ -1,4 +1,5 @@
 import axios from 'axios';
+import download from 'downloadjs';
 
 const BUTTON_CLASS = 'js-pdf-renderer';
 const BUTTON_ATTR = 'data-uri';
@@ -20,7 +21,7 @@ const bindButtons = () => {
       })
         .then(({ data }) => {
           if(data.file) {
-            window.location.href = data.file;
+            download('data:application/pdf;base64,' + data.contents, data.filename, 'application/pdf');
           }
         })
         .catch(err => {

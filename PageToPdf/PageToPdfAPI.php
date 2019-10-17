@@ -6,6 +6,7 @@ use GuzzleHttp\Client as Guzzle;
 use Illuminate\Support\Facades\Log;
 use Statamic\API\AssetContainer;
 use Statamic\API\Content;
+use Statamic\API\File;
 use Statamic\API\Folder;
 use Statamic\API\URL;
 use Statamic\Extend\API;
@@ -37,20 +38,23 @@ class PageToPdfAPI extends API
 
         $url = $content->absoluteUrl();
         $id = $content->id();
+        $exists = $this->exists($id);
 
         if($existing = $this->retrieve($id)) {
             return json_encode([
                 'status' => 'cached',
                 'status_code' => 304,
                 'reason_phrase' => 'File exists in filesystem',
-                'file' => $existing
+                'file' => $existing['file'],
+                'filename' => $existing['filename'],
+                'contents' => base64_encode($existing['contents'])
             ]);
         }
 
         // Testing
-        // $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+        $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-        $endpoint = 'https://pdfmyurl.com/api';
+        // $endpoint = 'https://pdfmyurl.com/api';
         $license = $this->getConfig('pdfmyurl_license_key', '');
         if(!$license) {
             Log::error('[PageToPDF] You have not entered a license key for PDFMyURL');
@@ -75,7 +79,6 @@ class PageToPdfAPI extends API
             ]);
         } catch(Exception $e) {
             Log::error("[PageToPDF] Attempt to generate pdf from page: \"{$url}\" failed: " . $e->getResponse());
-            return false;
         }
 
         $response_contents = $pdfmyurl_response->getBody()->getContents();
@@ -87,11 +90,15 @@ class PageToPdfAPI extends API
             $url = $this->store($id, $response_contents);
             $data = [
                 'file' => $url,
+                'filename' => Content::find($id)->slug() . '.pdf',
+                'contents' => base64_encode($response_contents),
                 'status' => 'success',
             ];
         } else {
             $data = [
                 'file' => null,
+                'filename' => null,
+                'contents' => null,
                 'status' => 'error'
             ];
         }
@@ -111,7 +118,14 @@ class PageToPdfAPI extends API
         $filesystem = $container->disk()->filesystem();
         $files = $filesystem->files($this->get_path() . '/' . $id);
         if($files) {
-            return URL::makeAbsolute($container->url() . '/' . $files[0]);
+            $file = $files[0];
+            $contents = $filesystem->get($file);
+            $result = [
+                'file' => URL::makeAbsolute($container->url() . '/' . $file),
+                'filename' => Content::find($id)->slug() . '.pdf',
+                'contents' => $contents
+            ];
+            return $result;
         } else {
             return false;
         }
