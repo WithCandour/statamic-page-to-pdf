@@ -13,6 +13,9 @@ class PageToPdfTags extends Tags
      */
     public function index()
     {
+        $license = $this->getConfig('pdfmyurl_license_key', false);
+        if(!$license) return null;
+
         $ctx = collect($this->context);
 
         $classes = $this->getParam('classes', '');

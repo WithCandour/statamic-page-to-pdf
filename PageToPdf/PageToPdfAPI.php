@@ -52,9 +52,9 @@ class PageToPdfAPI extends API
         }
 
         // Testing
-        $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+        // $endpoint = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-        // $endpoint = 'https://pdfmyurl.com/api';
+        $endpoint = 'https://pdfmyurl.com/api';
         $license = $this->getConfig('pdfmyurl_license_key', '');
         if(!$license) {
             Log::error('[PageToPDF] You have not entered a license key for PDFMyURL');
