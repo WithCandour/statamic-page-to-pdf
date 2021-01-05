@@ -9,7 +9,7 @@
   "author": "Andrew Haine <andrew.haine@withcandour.co.uk>",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "downloadjs": "^1.4.7"
   },
   "devDependencies": {
